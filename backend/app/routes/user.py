@@ -1,10 +1,12 @@
 import os
 from typing import Annotated
 import httpx
-from fastapi import APIRouter, Depends, HTTPException, status
+import uuid
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
+from app.cloudinary import upload
 from app.db import get_db
 from app.schemas.user import GoogleAuthToken, Token, TokenData, UserAdditionalFields, UserSignUp
 from app.services.user import UserService
@@ -67,4 +69,7 @@ async def add_additional_fields(data:UserAdditionalFields, db:AsyncSession = Dep
     await user_service.completeUserSignUp(data, db)
         
 
-    
+@user_router.post("/profilepic")
+async def update_profilepic(picture:UploadFile = File(...), user:str = Depends(user_service.get_user), db:AsyncSession = Depends(get_db)):
+    urls = await upload(picture)
+    await user_service.updateProfilePicture(urls['source_url'])

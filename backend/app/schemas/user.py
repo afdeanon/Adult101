@@ -23,4 +23,3 @@ class UserSignUp(BaseModel):
 class UserAdditionalFields(BaseModel):
     username:str
     bio:str | None = None
-    profile_pic:str | None = None

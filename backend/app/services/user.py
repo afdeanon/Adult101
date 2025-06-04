@@ -56,3 +56,10 @@ class UserService:
             if value:
                 setattr(user,attr, value)
         db.commit()
+
+    async def updateProfilePicture(user:str, url:str, db:AsyncSession):
+        user:User = select(User).where(User.email == user)
+
+        user.profile_pic = url
+
+        db.commit()
