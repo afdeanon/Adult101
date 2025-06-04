@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+.venv
+.frontendenv
+.taskpalvenv
+.idea
+.pytest_cache/
+coverage_re/
+.coverage
