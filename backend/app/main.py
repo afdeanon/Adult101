@@ -10,14 +10,15 @@ load_dotenv()
 
 def init_app(init_db:bool = True):
     
+    url = os.getenv("DB_URL")
+    if init_db:
+        sessionmanager.init(url)
+    
+    if not url:
+        raise RuntimeError("Missing Url env variable")
+    
     @asynccontextmanager
     async def lifespan(app:FastAPI) -> AsyncGenerator[None, None]:
-        if init_db:
-            url = os.getenv("DB_URL")
-        
-        if not url:
-            raise RuntimeError("Missing Url env variable")
-        
         print("server is starting")
     
         yield

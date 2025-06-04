@@ -1,13 +1,15 @@
 import jwt
 from datetime import timedelta, datetime, timezone
+
+from app.schemas.user import TokenData
 class JWTService():
     def __init__(self, secret:str, algorithm:str):
         self._secret = secret
         self._algorithm = algorithm
         
-    def create_token(self, payload:dict) -> str:
+    def create_token(self, payload:TokenData) -> str:
         return jwt.encode(
-            payload,
+            payload.model_dump(),
             self._secret,
             algorithm = self._algorithm,
             headers={"exp": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()} #7 days

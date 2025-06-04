@@ -44,7 +44,7 @@ async def google_auth(token:GoogleAuthToken):
 async def login(form_data:Annotated[OAuth2PasswordRequestForm, Depends()], db:AsyncSession = Depends(get_db)):
     email = await user_service.authenticate(form_data.username, form_data.password, db)
 
-    access_token = await jwt_service.create_token(TokenData(user_id=email))
+    access_token = jwt_service.create_token(TokenData(user_id=email))
 
     return {"access_token":access_token, "token_type":"bearer"}
 
@@ -54,7 +54,7 @@ async def signup(user:UserSignUp, db:AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="missing password")
     await user_service.signUp(user, db)
 
-    access_token = await jwt_service.create_token(TokenData(user_id=user.email))
+    access_token = jwt_service.create_token(TokenData(user_id=user.email))
     return {"access_token":access_token, "token_type":"bearer"}
 
 @user_router.post("/signup-google")
@@ -72,4 +72,6 @@ async def add_additional_fields(data:UserAdditionalFields, db:AsyncSession = Dep
 @user_router.post("/profilepic")
 async def update_profilepic(picture:UploadFile = File(...), user:str = Depends(user_service.get_user), db:AsyncSession = Depends(get_db)):
     urls = await upload(picture)
-    await user_service.updateProfilePicture(urls['source_url'])
+    await user_service.updateProfilePicture(user, urls['secure_url'], db)
+
+    return urls['secure_url']

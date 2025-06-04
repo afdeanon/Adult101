@@ -11,13 +11,13 @@ class DatabaseSessionManager:
         self._engine:AsyncEngine|None = None
         self._sessionmaker:AsyncSession|None = None
 
-    async def init(self, host:str, reset_tables:bool = True):
+    def init(self, host:str, reset_tables:bool = False):
         self._engine = create_async_engine(host)
-        self._sessionmaker = async_sessionmaker(self._engine)
-        if reset_tables:
-            async with self._engine.begin() as conn:
-                await self.drop_all(conn)
-                await self.create_all(conn)
+        self._sessionmaker = async_sessionmaker(bind=self._engine, expire_on_commit=False, autocommit=False)
+        # if reset_tables:
+        #     async with self._engine.begin() as conn:
+        #         await self.drop_all(conn)
+        #         await self.create_all(conn)
     
     @contextlib.asynccontextmanager
     async def connect(self) -> AsyncIterator[AsyncConnection]:
@@ -34,7 +34,7 @@ class DatabaseSessionManager:
     async def session(self) ->AsyncIterator[AsyncSession]:
         if self._sessionmaker is None:
             raise Exception("DatabaseSessionManager not initalized")
-        session:AsyncSession = self._sessionmaker
+        session:AsyncSession = self._sessionmaker()
         try:
             yield session
         except Exception:

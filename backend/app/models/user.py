@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db import Base
 
 class User(Base):
-    __tablename__ = "User"
+    __tablename__ = "users"
 
     id:Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username:Mapped[str] = mapped_column(unique=True, nullable=True)

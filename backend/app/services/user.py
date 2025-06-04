@@ -10,7 +10,7 @@ from app.utils.security import hash_pwd, oauth2_scheme, verify_pwd
 
 
 class UserService:
-    async def authenticate(email:str, password:str, db:AsyncSession):
+    async def authenticate(self, email:str, password:str, db:AsyncSession):
         stmt = select(User.password).where(User.email == email)
         try:
             res = await db.execute(stmt)
@@ -23,7 +23,7 @@ class UserService:
         except Exception:
             raise
     
-    async def get_user(token:str = Depends(oauth2_scheme)):
+    async def get_user(self, token:str = Depends(oauth2_scheme)):
         #Depends(oauth2_scheme) parses "Bearer " part out and just returns the token
         credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -49,7 +49,7 @@ class UserService:
         await db.commit()
     
 
-    async def completeUserSignUp(additional_fields:UserAdditionalFields, user:str, db:AsyncSession):
+    async def completeUserSignUp(self, additional_fields:UserAdditionalFields, user:str, db:AsyncSession):
         user = select(User).where(User.email == user)
 
         for attr, value in additional_fields.model_dump():
@@ -57,9 +57,10 @@ class UserService:
                 setattr(user,attr, value)
         db.commit()
 
-    async def updateProfilePicture(user:str, url:str, db:AsyncSession):
+    async def updateProfilePicture(self, user:str, url:str, db:AsyncSession):
         user:User = select(User).where(User.email == user)
 
         user.profile_pic = url
 
-        db.commit()
+        await db.commit()
+        
