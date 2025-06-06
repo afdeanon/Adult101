@@ -1,12 +1,41 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Button, NativeSyntheticEvent, Platform, StyleSheet, TextInputChangeEventData } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { TextInput } from 'react-native-gesture-handler';
+import { useState } from 'react';
 
 export default function HomeScreen() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text)
+  }
+
+  const handlePasswordChange = (text: string) => {
+    setPassword(text)
+  }
+
+  const handleSignUp = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/auth/signup', {
+        method: "POST", headers: {
+          "Content-Type": "application/json"
+        }, body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      })
+      console.log(response)
+    }
+    catch (e) {
+      console.log(e)
+    }
+  }
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -16,7 +45,20 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
+      <TextInput value={email} onChangeText={handleEmailChange} style={{
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+      }} />
+      <TextInput value={password} onChangeText={handlePasswordChange} style={{
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+      }} />
+      <Button title='Submit' onPress={handleSignUp}></Button>
+      {/* <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
@@ -50,7 +92,8 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
-      </ThemedView>
+      </ThemedView> */}
+
     </ParallaxScrollView>
   );
 }
