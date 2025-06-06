@@ -58,8 +58,8 @@ async def signup(user:UserSignUp, db:AsyncSession = Depends(get_db)):
     return {"access_token":access_token, "token_type":"bearer"}
 
 @user_router.post("/signup-google")
-async def signup(user = Depends(user_service.get_user)):
-    await user_service.signUp(UserSignUp(email=user))
+async def signup(user = Depends(user_service.get_user), db:AsyncSession = Depends(get_db)):
+    await user_service.signUp(UserSignUp(email=user), db)
 
     access_token = jwt_service.create_token(TokenData(user_id=user))
 

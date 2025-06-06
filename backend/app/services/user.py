@@ -39,7 +39,7 @@ class UserService:
         except jwt.exceptions:
             raise credentials_exception
     
-    async def signUp(user:UserSignUp, db:AsyncSession):
+    async def signUp(self, user:UserSignUp, db:AsyncSession):
         new_user = user.model_dump()
         if new_user['password']:
             new_user['password'] = hash_pwd(new_user['password'])
