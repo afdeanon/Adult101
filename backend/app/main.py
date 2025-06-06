@@ -20,8 +20,8 @@ def init_app(init_db:bool = True):
     if init_db:
         sessionmanager.init(url)
         # asyncio.run(sessionmanager.create_tables())
-        loop = asyncio.get_event_loop()
-        loop.create_task(sessionmanager.create_tables())
+        # loop = asyncio.get_event_loop()
+        # loop.create_task(sessionmanager.create_tables())
     
     if not url:
         raise RuntimeError("Missing Url env variable")
