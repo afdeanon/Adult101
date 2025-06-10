@@ -5,7 +5,7 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { TextInput } from 'react-native-gesture-handler';
+import { TextInput } from 'react-native';
 import { useState } from 'react';
 
 export default function HomeScreen() {
@@ -31,6 +31,10 @@ export default function HomeScreen() {
         })
       })
       console.log(response)
+      const data = await response.json()
+      console.log(data.access_token)
+      const token_for_future_request = data.token_type + " " + data.access_token
+      console.log(token_for_future_request)
     }
     catch (e) {
       console.log(e)
